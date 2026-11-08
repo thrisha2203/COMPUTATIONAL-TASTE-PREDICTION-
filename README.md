@@ -1,8 +1,26 @@
-# Artificial Taste Perception: Explainable ML for Taste Prediction and an E-Tongue Prototype
+<h1 align="center">🧪 Artificial Taste Perception</h1>
+<h3 align="center">Explainable Machine Learning for Taste Prediction + an Arduino E-Tongue Prototype</h3>
 
-> Predicts the **basic taste (Salty, Sweet, Umami, Bitter, Sour)** of a molecule from its chemical structure, explains every prediction, scores how trustworthy the underlying data label is, and connects to a low-cost **Arduino pH + TDS electronic-tongue prototype**.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.9%2B-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
+  <img src="https://img.shields.io/badge/scikit--learn-Random%20Forest-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Streamlit-App-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Explainable%20AI-SHAP-2E7D32?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/Arduino-pH%20%2B%20TDS-00979D?style=for-the-badge&logo=arduino&logoColor=white"/>
+</p>
 
-![Python](https://img.shields.io/badge/Python-3.9%2B-blue) ![scikit-learn](https://img.shields.io/badge/scikit--learn-Random%20Forest-orange) ![Streamlit](https://img.shields.io/badge/Streamlit-app-red) ![Explainable AI](https://img.shields.io/badge/Explainable%20AI-SHAP-green)
+<p align="center">
+  <img src="https://img.shields.io/badge/Accuracy-84.7%25-brightgreen?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Macro%20F1-0.714-blue?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Weighted%20F1-0.847-blueviolet?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Molecules-2%2C987-orange?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Algorithms%20compared-7-red?style=flat-square"/>
+  <img src="https://img.shields.io/badge/CV-5--fold%20stratified-teal?style=flat-square"/>
+</p>
+
+> Predicts the **basic taste (🧂 Salty, 🍬 Sweet, 🍄 Umami, ☕ Bitter, 🍋 Sour)** of a molecule from its chemical structure, explains every prediction, scores how trustworthy the underlying data label is, and connects to a low-cost **Arduino pH + TDS electronic-tongue prototype**.
+
+**Quick links:** [Results](#1-results-at-a-glance) · [Problem](#2-the-problem) · [Solution](#3-the-solution) · [Data](#4-data) · [Models](#5-models-and-algorithm-selection) · [Class imbalance](#6-how-class-imbalance-is-handled) · [Explainability](#7-explainability-and-the-confidence-score) · [App](#8-application-streamlit) · [Hardware](#9-hardware-prototype-e-tongue-demo) · [Limitations](#10-limitations-stated-honestly) · [Run it](#13-run-it-locally)
 
 ---
 
@@ -18,6 +36,29 @@
 - Random Forest had the **best ROC-AUC on all five tastes (0.931 to 0.989)**.
 - Severe **class imbalance** (16 Salty vs 1,541 Bitter molecules) handled explicitly. See [Section 6](#6-how-class-imbalance-is-handled).
 - Every number in this README was computed from the data and models in this repository. Where a result is weak, it is reported as weak.
+
+### 📊 Accuracy vs baselines
+
+```mermaid
+%%{init: {"themeVariables": {"xyChart": {"plotColorPalette": "#2E7D32"}}}}%%
+xychart-beta
+    title "Overall 5-class accuracy (%), 5-fold CV"
+    x-axis ["Majority class", "Logistic Regression", "Random Forest (ours)"]
+    y-axis "Accuracy (%)" 0 --> 100
+    bar [51.6, 61.4, 84.7]
+```
+
+### 📊 F1 score per taste: Random Forest vs Logistic Regression baseline
+
+```mermaid
+%%{init: {"themeVariables": {"xyChart": {"plotColorPalette": "#1565C0, #E65100"}}}}%%
+xychart-beta
+    title "Per-taste F1 (blue = Random Forest, orange = Logistic Regression)"
+    x-axis [Salty, Sweet, Umami, Bitter, Sour]
+    y-axis "F1" 0 --> 1
+    bar [0.621, 0.853, 0.752, 0.871, 0.474]
+    bar [0.246, 0.575, 0.501, 0.712, 0.265]
+```
 
 *Overall 5-class figures use each molecule's highest taste score across the five models, based on out-of-fold predictions, so no molecule is scored by a model that trained on it.*
 
@@ -38,13 +79,20 @@ This project asks two questions:
 
 ```mermaid
 flowchart LR
-    A[ChemTastesDB<br/>4,078 records] --> B[Cleaning<br/>no invented values]
-    B --> C[2,987 training molecules]
-    C --> D[33 structural features<br/>from SMILES]
-    D --> E[5 one-vs-rest models<br/>7 algorithms compared]
-    E --> F[Confidence scores<br/>+ SHAP explanation]
-    F --> G[Streamlit app<br/>login, charts, history]
-    H[Arduino + pH + TDS sensors] --> G
+    A["🗄️ ChemTastesDB<br/>4,078 records"]:::data --> B["🧹 Cleaning<br/>no invented values"]:::clean
+    B --> C["✅ 2,987 training molecules"]:::clean
+    C --> D["⚗️ 33 structural features<br/>from SMILES"]:::feat
+    D --> E["🤖 5 one-vs-rest models<br/>7 algorithms compared"]:::model
+    E --> F["🔍 Confidence scores<br/>+ SHAP explanation"]:::explain
+    F --> G["🖥️ Streamlit app<br/>login, charts, history"]:::app
+    H["🔌 Arduino + pH + TDS sensors"]:::hw --> G
+    classDef data fill:#E3F2FD,stroke:#1565C0,color:#0D47A1
+    classDef clean fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20
+    classDef feat fill:#FFF3E0,stroke:#E65100,color:#BF360C
+    classDef model fill:#F3E5F5,stroke:#6A1B9A,color:#4A148C
+    classDef explain fill:#FFFDE7,stroke:#F9A825,color:#8D6E00
+    classDef app fill:#FFEBEE,stroke:#C62828,color:#B71C1C
+    classDef hw fill:#E0F7FA,stroke:#00838F,color:#006064
 ```
 
 **Four modules in the app**
@@ -61,6 +109,19 @@ flowchart LR
 ## 4. Data
 
 **Source:** ChemTastesDB, a curated database of tastants (Excel file with 4,078 rows and 8 columns: ID, Name, PubChem CID, CAS number, canonical SMILES, Taste, Class taste, Reference).
+
+### 🥧 Training-set class distribution (2,987 molecules)
+
+```mermaid
+%%{init: {"themeVariables": {"pie1": "#6D4C41", "pie2": "#EC407A", "pie3": "#FB8C00", "pie4": "#FDD835", "pie5": "#42A5F5", "pieTitleTextSize": "18px"}}}%%
+pie showData
+    title Molecules per taste (imbalanced)
+    "Bitter" : 1541
+    "Sweet" : 1161
+    "Umami" : 220
+    "Sour" : 49
+    "Salty" : 16
+```
 
 | Class in the raw file | Molecules | Used for the 5 models |
 | --- | --- | --- |
@@ -81,6 +142,18 @@ flowchart LR
 | Duplicate SMILES removed | -145 | Prevents the same molecule appearing in both train and test folds |
 | Invalid SMILES | 0 | Defensive check |
 | **Final training set** | **2,987** | |
+
+```mermaid
+flowchart TD
+    R["📥 Raw file<br/><b>4,078</b> records"]:::a --> K["Keep 5 basic tastes<br/><b>3,213</b> (-865 blank or non-basic)"]:::b
+    K --> S["Remove stereo-label conflicts<br/><b>-81</b>"]:::c
+    S --> D["Remove duplicate SMILES<br/><b>-145</b>"]:::c
+    D --> F["🎯 Final training set<br/><b>2,987</b> molecules"]:::d
+    classDef a fill:#E3F2FD,stroke:#1565C0
+    classDef b fill:#E8F5E9,stroke:#2E7D32
+    classDef c fill:#FFF3E0,stroke:#E65100
+    classDef d fill:#F3E5F5,stroke:#6A1B9A,stroke-width:3px
+```
 
 All negatives for each model are real molecules of the other four tastes.
 
@@ -104,6 +177,28 @@ Seven algorithms were compared **for every taste** with identical cross-validati
 | Bitter | 1,541 | 0.803 | 0.894 | 0.857 | **0.931** | 0.917 | 0.895 | 0.920 |
 | Sour | 49 | 0.902 | 0.815 | 0.944 | **0.961** | 0.922 | 0.933 | 0.954 |
 
+### 📊 Mean ROC-AUC across the five tastes, by algorithm
+
+```mermaid
+%%{init: {"themeVariables": {"xyChart": {"plotColorPalette": "#6A1B9A"}}}}%%
+xychart-beta
+    title "Mean cross-validated ROC-AUC over 5 tastes (higher is better)"
+    x-axis ["KNN", "LogReg", "SVM", "Extra Trees", "Grad. Boost", "Hist. GB", "Random Forest"]
+    y-axis "ROC-AUC" 0.7 --> 1
+    bar [0.824, 0.882, 0.902, 0.913, 0.919, 0.952, 0.959]
+```
+
+### 📊 Selected Random Forest: ROC-AUC per taste
+
+```mermaid
+%%{init: {"themeVariables": {"xyChart": {"plotColorPalette": "#00838F"}}}}%%
+xychart-beta
+    title "Random Forest ROC-AUC by taste (cross-validated)"
+    x-axis [Salty, Sweet, Umami, Bitter, Sour]
+    y-axis "ROC-AUC" 0.8 --> 1
+    bar [0.989, 0.945, 0.970, 0.931, 0.961]
+```
+
 **Why Random Forest**
 - Highest ROC-AUC on all five tastes in the training script's comparison. For Umami, Random Forest and Gradient Boosting are statistically tied (the standalone notebook's re-run scores both at 0.968), so either is defensible.
 - Handles non-linear feature interactions (for example the O/C ratio combined with ring and bond counts) without feature scaling.
@@ -120,6 +215,19 @@ Seven algorithms were compared **for every taste** with identical cross-validati
 | Umami | 0.970 | 0.964 | 0.793 | 0.695 | 0.741 |
 | Bitter | 0.931 | 0.860 | 0.867 | 0.860 | 0.863 |
 | Sour | 0.961 | 0.986 | 0.625 | 0.306 | 0.411 |
+
+### 📊 Precision, recall and F1 by taste (the imbalance story)
+
+```mermaid
+%%{init: {"themeVariables": {"xyChart": {"plotColorPalette": "#2E7D32, #C62828, #1565C0"}}}}%%
+xychart-beta
+    title "Random Forest at 0.5 threshold (green = precision, red = recall, blue = F1)"
+    x-axis [Salty, Sweet, Umami, Bitter, Sour]
+    y-axis "Score" 0 --> 1
+    bar [0.667, 0.858, 0.793, 0.867, 0.625]
+    bar [0.250, 0.825, 0.695, 0.860, 0.306]
+    bar [0.364, 0.841, 0.741, 0.863, 0.411]
+```
 
 In the combined 5-class prediction the per-taste F1 is: Bitter 0.871, Sweet 0.853, Umami 0.752, Salty 0.621, Sour 0.474.
 
@@ -140,6 +248,28 @@ The five tastes are badly imbalanced: Bitter 1,541, Sweet 1,161, Umami 220, Sour
 | **Macro and weighted F1** | Reported for the combined 5-class result | Macro F1 treats all tastes equally, so weak rare-class performance is visible. |
 | **Deduplication and conflict removal** | 145 duplicates and 81 stereo conflicts removed | Prevents leakage that would inflate rare-class scores. |
 | **No oversampling** | SMILES-derived data was not synthetically inflated | Oversampling 16 molecules (for example with SMOTE) would produce invented chemistry. |
+
+```mermaid
+mindmap
+  root((Class imbalance))
+    Problem
+      16 Salty vs 1541 Bitter
+    Modelling
+      One-vs-rest models
+      class_weight balanced
+      No SMOTE or invented data
+    Validation
+      Stratified 5-fold CV
+      Out-of-fold predictions
+      Dedup and conflict removal
+    Metrics
+      ROC-AUC for selection
+      Precision, recall, F1
+      Macro and weighted F1
+    Honesty
+      Salty and Sour flagged
+      Directional only
+```
 
 **The honest outcome:** Salty (16) and Sour (49) have high ROC-AUC but low recall (0.250 and 0.306), so the models rank them well but still miss most true positives at the default threshold. The app flags those two tastes as "directional only". The real fix is more data, ideally E-tongue measurements of salt solutions at graded concentrations.
 
