@@ -1,0 +1,6 @@
+{
+  "name": "Artificial Taste Perception ML Lab",
+  "description": "Computational modelling of artificial taste perception using Explainable ML (Wine Quality and CQI Coffee datasets), with interactive SHAP explanations, ML model training, and exportable VS Code project structure.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
